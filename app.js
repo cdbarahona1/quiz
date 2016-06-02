@@ -10,7 +10,7 @@ var flash = require('express-flash');
 var methodOverride = require('method-override');
 
 var routes = require('./routes/index');
-
+var session_controller = require('./controllers/session_controller');
 var app = express();
 
 // view engine setup

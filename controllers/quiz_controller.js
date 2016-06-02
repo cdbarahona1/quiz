@@ -35,10 +35,19 @@ exports.ownershipRequired = function(req, res, next){
 
 // GET /quizzes
 exports.index = function(req, res, next) {
-	models.Quiz.findAll()
+  var search = req.query.search || '';
+  var format = req.params.format;
+
+	models.Quiz.findAll({where: {question:{$like:"%"+search+"%"}}})
 		.then(function(quizzes) {
-			res.render('quizzes/index.ejs', { quizzes: quizzes});
-		})
+      if(!format || format === 'html'){
+			 res.render('quizzes/index.ejs', { quizzes: quizzes});
+		}else if(format === 'json'){
+      res.json(quizzes);
+    }else{
+      throw new Error('No se admite formato=' +format);
+    }
+  })
 		.catch(function(error) {
 			next(error);
 		});
@@ -47,11 +56,18 @@ exports.index = function(req, res, next) {
 
 // GET /quizzes/:id
 exports.show = function(req, res, next) {
+  var format = req.params.format;
 
 	var answer = req.query.answer || '';
 
+  if (!format || format === 'html') {
 	res.render('quizzes/show', {quiz: req.quiz,
 								answer: answer});
+}else if(format === 'json'){
+  res.json(req.quiz);
+}else{
+  throw new Error('No se admite formato=' +format);
+}
 };
 
 
